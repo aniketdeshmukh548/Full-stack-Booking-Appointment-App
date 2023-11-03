@@ -7,14 +7,47 @@
 </head>
 <body>
     <h1>Booking Appointment App</h1>
-    <form action="">
-        <label for="html">Username:</label> <br>
-        <input type="text" placeholder="Username"> <br>
-        <label for="html">Email:</label> <br>
-        <input type="text" placeholder="Email" required> <br>
-        <label for="html">Phone No.:</label> <br>
-        <input type="number" placeholder="Username"> <br>
-    </form> <br>
-    <button type="submit">Submit</button>
+    <form action="http://localhost:3000/user/add-user" method="POST"> <!-- Specify the action and method -->
+        <label for="username">Username:</label> <br>
+        <input type="text" name="name" placeholder="Username"> <br> <!-- Add name attribute -->
+        <label for="email">Email:</label> <br>
+        <input type="text" name="email" placeholder="Email" required> <br> <!-- Add name attribute -->
+        <label for="phoneno">Phone No.:</label> <br>
+        <input type="number" name="phoneno" placeholder="Phone Number"> <br> <!-- Add name attribute -->
+        <button type="submit">Submit</button>
+    </form>
+    <h1>User List</h1>
+    <ul id="userList">
+        <!-- User data will be displayed here -->
+    </ul>
+    
+    <script>
+         function deleteUser(userId) {
+            fetch(`http://localhost:3000/user/delete-user/${userId}`, { method: 'DELETE' }) // Replace with your delete endpoint
+                .then(() => {
+                    const listItem = document.getElementById(`user-${userId}`);
+                    listItem.remove();
+                })
+                .catch(error => {
+                    console.error('Error deleting user:', error);
+                });
+        }
+
+        fetch('http://localhost:3000/user/get-user') // Replace with your backend endpoint
+            .then(response => response.json())
+            .then(data => {
+                const userList = document.getElementById('userList');
+                data.allUsers.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.id = `user-${user.id}`; // Add an ID for the list item
+                    listItem.innerHTML = `Username: ${user.name}, Email: ${user.email}, Phone No.: ${user.phoneno}
+                    <button onclick="deleteUser(${user.id})">Delete</button>`;
+                    userList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    </script>
 </body>
 </html>
