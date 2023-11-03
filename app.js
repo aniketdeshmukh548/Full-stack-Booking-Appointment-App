@@ -23,6 +23,21 @@ app.get('/user/get-user', async (req, res, next) => {
   res.status(200).json({ allUsers: users });
 });
 
+// Delete a user by ID
+app.delete('/user/delete-user/:userId', async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+      // Use Sequelize to delete the user by their ID
+      await User.destroy({
+          where: { id: userId }
+      });
+      res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'User deletion failed' });
+  }
+});
+
 
 sequelize.sync().then((result) => {
   app.listen(3000);
